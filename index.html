@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>عصفور</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦</text></svg>">
+<link rel="stylesheet" href="/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<div id="auth-screen" class="auth-screen hidden">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none"><path d="M6 30c6-2 10-7 11-13 3 6 9 8 15 6-2 5-7 8-12 8 4 3 10 3 14-1-3 8-12 12-21 9-5-2-8-5-9-9-3 1-5 0-7-1 3-1 6-3 9 1z" fill="currentColor"/></svg>
+      <h1>عصفور</h1>
+      <p class="tagline">قل رأيك بحرية</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">تسجيل الدخول</button>
+      <button class="auth-tab" data-tab="register">حساب جديد</button>
+    </div>
+
+    <form id="login-form" class="auth-form">
+      <input type="text" id="login-username" placeholder="اسم المستخدم" autocomplete="username" required>
+      <input type="password" id="login-password" placeholder="كلمة المرور" autocomplete="current-password" required>
+      <div class="auth-error" id="login-error"></div>
+      <button type="submit" class="btn-primary">دخول</button>
+    </form>
+
+    <form id="register-form" class="auth-form hidden">
+      <input type="text" id="reg-display" placeholder="الاسم الظاهر" required>
+      <input type="text" id="reg-username" placeholder="اسم المستخدم (بالإنجليزية)" required>
+      <input type="password" id="reg-password" placeholder="كلمة المرور" required>
+      <div class="auth-error" id="reg-error"></div>
+      <button type="submit" class="btn-primary">إنشاء حساب</button>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg class="brand-mark small" viewBox="0 0 48 48" fill="none"><path d="M6 30c6-2 10-7 11-13 3 6 9 8 15 6-2 5-7 8-12 8 4 3 10 3 14-1-3 8-12 12-21 9-5-2-8-5-9-9-3 1-5 0-7-1 3-1 6-3 9 1z" fill="currentColor"/></svg>
+      <span>عصفور</span>
+    </div>
+    <div class="topbar-search">
+      <input type="text" id="search-input" placeholder="ابحث في عصفور">
+    </div>
+    <div class="topbar-user" id="topbar-user"></div>
+  </header>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="timeline" aria-label="الرئيسية">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 1.696L.622 8.807l1.06 1.696L3 9.679V19.5C3 20.881 4.119 22 5.5 22h13c1.381 0 2.5-1.119 2.5-2.5V9.679l1.318.824 1.06-1.696L12 1.696zM12 16.5c-1.933 0-3.5-1.567-3.5-3.5s1.567-3.5 3.5-3.5 3.5 1.567 3.5 3.5-1.567 3.5-3.5 3.5z"/></svg>
+    </button>
+    <button class="tab" data-view="explore" aria-label="استكشاف">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/></svg>
+    </button>
+    <button class="tab" data-view="notifications" aria-label="الإشعارات">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.14 2 5 5.14 5 9v4.586l-1.707 1.707A1 1 0 004 17h16a1 1 0 00.707-1.707L19 13.586V9c0-3.86-3.14-7-7-7zm0 20c1.657 0 3-1.343 3-3H9c0 1.657 1.343 3 3 3z"/></svg>
+      <span id="notif-badge" class="badge hidden"></span>
+    </button>
+    <button class="tab" data-view="profile" aria-label="ملفي">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v1a2 2 0 002 2h12a2 2 0 002-2v-1c0-2.761-3.582-5-8-5z"/></svg>
+    </button>
+  </nav>
+
+  <main class="feed" id="feed-container">
+    <div class="sort-toggle hidden" id="sort-toggle">
+      <button class="sort-btn active" data-sort="best">الأفضل</button>
+      <button class="sort-btn" data-sort="latest">الأحدث</button>
+    </div>
+    <div class="composer" id="composer">
+      <div class="composer-avatar" id="composer-avatar"></div>
+      <div class="composer-body">
+        <textarea id="composer-text" placeholder="بماذا تفكر؟" maxlength="2000" rows="2"></textarea>
+        <div id="media-preview" class="media-preview hidden"></div>
+        <div class="composer-actions">
+          <label class="media-btn" title="أضف صورة أو فيديو">
+            <input type="file" id="media-input" accept="image/*,video/*" hidden>
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zm1 2v10h14V7H5zm3 2a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm-1 8l3.5-4.5 2.5 3 2-2.5L18 17H7z"/></svg>
+          </label>
+          <button id="post-btn" class="btn-primary small">نشر</button>
+        </div>
+      </div>
+    </div>
+    <div id="posts-list" class="posts-list"></div>
+  </main>
+
+  <button id="fab-compose" class="fab-compose hidden" aria-label="نشر">
+    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 4v16m-8-8h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<div id="post-modal" class="modal hidden">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-panel" id="modal-panel"></div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/supabase-client.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
